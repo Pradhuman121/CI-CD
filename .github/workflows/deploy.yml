@@ -1,0 +1,39 @@
+name: Deploy React App
+
+on:
+  push:
+    branches:
+      - main  # Trigger the workflow when changes are pushed to the main branch
+
+permissions:
+  contents: write  # This grants write permissions for the repository contents (for pushing to `gh-pages`)
+  pages: write     # Ensure GitHub Pages deployment has write access
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '22.13.0'  # Use the latest LTS version of Node.js
+
+    - name: Install dependencies
+      run: |
+        npm install
+
+    - name: Build React app
+      run: |
+        npm run build
+
+    - name: Deploy to GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@v4
+      with:
+        branch: gh-pages  # Deploy to the gh-pages branch
+        folder: build     # The folder to deploy (created by React build)
+      env:
+        GITHUB_TOKEN: ${{ secrets.REACT_APP_API_KEY }}
